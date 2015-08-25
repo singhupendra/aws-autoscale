@@ -16,10 +16,10 @@ You need to perform several task before using this. Steps required are given bel
     http://docs.aws.amazon.com/AutoScaling/latest/DeveloperGuide/adding-lifecycle-hooks.html<br/>
 
 <strong>4. Provide access to nginx file so that webserver can edit the file</strong><br/>
-    use setfacl command for this<br/>
+    use <strong>setfacl</strong> command for this<br/>
     
 <strong>5. Provide privilege to reload the nginx service to the use executing this script</strong><br/>
     use visudo and add <br>
-      <stong>nginx ALL=(root)NOPASSWD:/etc/init.d/nginx</strong> (trying to find better and secure way to reload the service)</br>
+      <strong>nginx ALL=(root)NOPASSWD:/etc/init.d/nginx</strong> (trying to find better and secure way to reload the service)</br>
       
 
