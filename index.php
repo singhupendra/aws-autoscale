@@ -86,7 +86,7 @@ if($header[0]=="HTTP/1.1 200 OK"){
 
 }
 else 
-//If instance is terminated remove the webserver from nginx config
+//If instance is terminated remove the webserver from nginx's config
 	if($lifecycle == "autoscaling:EC2_INSTANCE_TERMINATING")
 	{
 	$path_to_file = 'nginx.conf';
