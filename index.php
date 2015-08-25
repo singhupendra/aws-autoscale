@@ -1,11 +1,14 @@
 <?php
 error_reporting(E_ALL); 
 require __DIR__.'/vendor/autoload.php';
+require_once 'config.php';
  
 use Aws\Sns\MessageValidator\Message;
 use Aws\Sns\MessageValidator\MessageValidator;
 use Guzzle\Http\Client;
-//use \Aws\Ec2\Ec2Client;
+
+//Create ec2 client to get details
+$ec2 = \Aws\Ec2\Ec2Client::factory($config); 
 
 // Make sure the request is POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -13,9 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 header("HTTP/1.1 405 Error");
     die;
 }
- 
+
+// Create a message from the post data and validate its signature 
 try {
-    // Create a message from the post data and validate its signature
     $message = Message::fromRawPostData();
     $validator = new MessageValidator();
     $validator->validate($message);
@@ -25,12 +28,14 @@ try {
     header("HTTP/1.1 404 Not Found");
     die;
 }
- 
+
+
+// Send a request to the SubscribeURL to complete subscription 
 if ($message->get('Type') === 'SubscriptionConfirmation') {
-    // Send a request to the SubscribeURL to complete subscription
       $client = new Guzzle\Http\Client();
       $client->get($message->get('SubscribeURL'))->send();
 }
+
 //Get the Instance ID 
 $data = json_decode($message->get('Message'),true);
 $instanceId = $data['EC2InstanceId'];
@@ -38,13 +43,7 @@ $instanceId = $data['EC2InstanceId'];
 $event = $data['Event'];
 $lifecycle =$data['LifecycleTransition'];
 
-//Create ec2 client
-$config = array();        
-$config['key'] = '';                         //AWS key
-$config['secret'] = ''; //Secret key
-$config['region'] = '';                           //Region
-$ec2 = \Aws\Ec2\Ec2Client::factory($config);                    //Create client
-
+//Get instance ID from the SNS notification
 $response = $ec2->DescribeInstances(array(
     'InstanceIds' => array($instanceId)
 ));
@@ -54,9 +53,11 @@ $response = $ec2->DescribeInstances(array(
 $private_ip = ($response->getPath('Reservations/*/Instances/*/PrivateIpAddress'));
 $private_ip = $private_ip[0];
 
-//Get the HTTP headers for server status
+//Get autoscaling event type
+//if new instance is launched check webserver status before adding to nginx
 if ($data['Event'] == "autoscaling:EC2_INSTANCE_LAUNCH")
 {
+//Get the HTTP headers for server status
 sleep(30);
 $header = get_headers("http://".$private_ip,1);
 $serverStatus="Check";
@@ -70,10 +71,9 @@ if($header[0]=="HTTP/1.1 200 OK"){
 	$file_contents = file_get_contents($path_to_file);
 	$file_contents = str_replace("#IPHERE;","#IPHERE;\nserver ".$private_ip.";",$file_contents);
 	file_put_contents($path_to_file,$file_contents);
-	$serverStatus="Server is up!!!";
-$file1->fwrite("Event is :".$event."->"." Instance id is ".$data['EC2InstanceId']." private ip is ".$private_ip."\n");
+	//Just for logging messages	
+	$file1->fwrite("Event is :".$event."->"." Instance id is ".$data['EC2InstanceId']." private ip is ".$private_ip."\n");
 	break;
-	
 	}
 	else
 	{
@@ -85,6 +85,7 @@ $file1->fwrite("Event is :".$event."->"." Instance id is ".$data['EC2InstanceId'
 
 }
 else 
+//If instance is terminated remove the webserver from nginx config
 	if($lifecycle == "autoscaling:EC2_INSTANCE_TERMINATING")
 	{
 	$path_to_file = 'nginx.conf';
@@ -93,7 +94,8 @@ else
 	file_put_contents($path_to_file,$file_contents);
 	$file1->fwrite("Event is :".$lifecycle."->"." Instance id is ".$data['EC2InstanceId']." private ip is ".$private_ip."\n");
 	}
-$file2 = new SplFileObject('s.log','a'); //To log the message from SNS
-$file2->fwrite($serverStatus."\n");      // To log the server status
+//Just to log messages 	
+	$file2 = new SplFileObject('s.log','a'); //To log the message from SNS
+	$file2->fwrite($serverStatus."\n");      // To log the server status
 
 ?>
