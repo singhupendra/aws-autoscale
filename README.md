@@ -21,5 +21,8 @@ You need to perform several task before using this. Steps required are given bel
 <strong>5. Provide privilege to reload the nginx service to the use executing this script</strong><br/>
     use visudo and add <br>
       <strong>nginx ALL=(root)NOPASSWD:/etc/init.d/nginx</strong> (trying to find better and secure way to reload the service)</br>
+
+<strong>6. Access Key ID and Secret Access Key<strong></br>
+    http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html</br>
       
 
