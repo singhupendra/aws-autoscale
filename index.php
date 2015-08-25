@@ -71,6 +71,7 @@ if($header[0]=="HTTP/1.1 200 OK"){
 	$file_contents = file_get_contents($path_to_file);
 	$file_contents = str_replace("#IPHERE;","#IPHERE;\nserver ".$private_ip.";",$file_contents);
 	file_put_contents($path_to_file,$file_contents);
+	exec('/etc/init.d/nginx reload');	
 	//Just for logging messages	
 	$file1->fwrite("Event is :".$event."->"." Instance id is ".$data['EC2InstanceId']." private ip is ".$private_ip."\n");
 	break;
@@ -92,6 +93,8 @@ else
 	$file_contents = file_get_contents($path_to_file);
 	$file_contents = str_replace("server ".$private_ip.";\n","",$file_contents);
 	file_put_contents($path_to_file,$file_contents);
+	exec('/etc/init.d/nginx reload');
+//Just to log messages 	
 	$file1->fwrite("Event is :".$lifecycle."->"." Instance id is ".$data['EC2InstanceId']." private ip is ".$private_ip."\n");
 	}
 //Just to log messages 	
