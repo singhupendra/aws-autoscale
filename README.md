@@ -24,5 +24,9 @@ You need to perform several task before using this. Steps required are given bel
 
 <strong>6. Access Key ID and Secret Access Key<strong></br>
     http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html</br>
-      
+
+
+<h2>Installation</h2>
+
+Just copy the files in your webroot (within a folder).
 
