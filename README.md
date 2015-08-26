@@ -1,7 +1,7 @@
 # aws-autoscale
 To automatically add/remove new ec2 instances to nginx upstream server and avoid ELB.This script checks the health of the new instance prior adding the it to the load balancer.
 
-<strong>Requirements</strong>
+<h2>Requirements</h2>
 
 You need to perform several task before using this. Steps required are given below:<br/>
 <strong>1. Create a SNS topic</strong><br/>
