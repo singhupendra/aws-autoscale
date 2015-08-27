@@ -30,4 +30,5 @@ You need to perform several task before using this. Steps required are given bel
 
 Just copy the files in your webroot (within a desired folder).<br/>
 Edit the config file and provide your acess key id, secret access key and region
+NOTE : YOU MIGHT NEED TO TWEAK FEW THINGS AS PER YOUR ENVIRONMENT.
 
