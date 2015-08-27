@@ -67,7 +67,7 @@ while( $try < 5){
 	$header = get_headers("http://".$private_ip,1);
 if($header[0]=="HTTP/1.1 200 OK"){
 	
-	$path_to_file = 'nginx.conf';   //nginx configuration file
+	$path_to_file = '/etc/nginx/nginx.conf';   //nginx configuration file
 	$file_contents = file_get_contents($path_to_file);
 	$file_contents = str_replace("#IPHERE;","#IPHERE;\nserver ".$private_ip.";",$file_contents);
 	file_put_contents($path_to_file,$file_contents);
@@ -89,7 +89,7 @@ else
 //If instance is terminated remove the webserver from nginx's config
 	if($lifecycle == "autoscaling:EC2_INSTANCE_TERMINATING")
 	{
-	$path_to_file = 'nginx.conf';
+	$path_to_file = '/etc/nginx/nginx.conf';
 	$file_contents = file_get_contents($path_to_file);
 	$file_contents = str_replace("server ".$private_ip.";\n","",$file_contents);
 	file_put_contents($path_to_file,$file_contents);
