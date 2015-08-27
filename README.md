@@ -28,5 +28,6 @@ You need to perform several task before using this. Steps required are given bel
 
 <h2>Installation</h2>
 
-Just copy the files in your webroot (within a folder).
+Just copy the files in your webroot (within a desired folder).<br/>
+Edit the config file and provide your acess key id, secret access key and region
 
